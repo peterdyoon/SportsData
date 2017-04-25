@@ -1,0 +1,53 @@
+<ul class="nav nav-pills">
+    <li ng-class="{active:tab === 1}"><a ng-click="selectTab(1)" href>Description</a></li>
+    <li ng-class="{active:tab === 2}"><a ng-click="selectTab(2)" href>Specifications</a></li>
+    <li ng-class="{active:tab === 3}"><a ng-click="selectTab(3)" href>Reviews</a></li>
+</ul>
+<div class="panel" ng-show="tab === 1">
+    <h4>Description</h4>
+    <blockquote>{{product.description}}</blockquote>
+</div>
+<div class="panel" ng-show="tab === 2">
+    <h4>Specifications</h4>
+    <blockquote>In Development</blockquote>
+</div>
+<div class="panel" ng-show="tab === 3">
+    <blockquote ng-repeat="review in product.reviews">
+        <b>Stars: {{review.stars}}</b> {{review.body}}
+        <cite>by: {{review.author}}</cite>
+    </blockquote>
+    <h4>Reviews</h4>
+    <form name="reviewForm" ng-controller="ReviewController" ng-submit="reviewForm.$valid && addReview(product)" novalidate>
+        <div class="alert alert-danger" ng-show="(reviewForm.stars.$dirty && reviewForm.stars.$invalid) || (((reviewForm.body.$pristine && reviewForm.body.$touched) || reviewForm.body.$dirty) && reviewForm.body.$invalid) || (reviewForm.author.$dirty && reviewForm.author.$invalid)" role="alert">
+            <ul>
+                <li ng-show="reviewForm.stars.$dirty && reviewForm.stars.$invalid">Rating is required</li>
+                <li ng-show="((reviewForm.body.$pristine && reviewForm.body.$touched) || reviewForm.body.$dirty) && reviewForm.body.$invalid">Review is required</li>
+                <li ng-show="reviewForm.author.$dirty && reviewForm.author.$invalid">Email is required</li>
+            </ul>
+        </div>
+        <blockquote>
+            <b>Stars: {{newReview.stars}}</b>
+            <p>{{newReview.body}}</p>
+            <cite>by: {{newReview.author}}</cite>
+        </blockquote>
+        <div class="form-group" ng-class="{'has-error':reviewForm.stars.$dirty && reviewForm.stars.$invalid}">
+            <label class="control-label" for="stars">Rating</label>
+            <select name="stars" class="form-control" ng-model="newReview.stars" required>
+                <option value="1">1 star</option>
+                <option value="2">2 stars</option>
+                <option value="3">3 stars</option>
+                <option value="4">4 stars</option>
+                <option value="5" selected="selected">5 stars</option>
+            </select>
+        </div>
+        <div class="form-group" ng-class="{'has-error':reviewForm.body.$dirty && reviewForm.body.$invalid}">
+            <label class="control-label" for="body">Review</label>
+            <textarea name="body" class="form-control" placeholder="Write your review..." ng-model="newReview.body" required></textarea>
+        </div>
+        <div class="form-group" ng-class="{'has-error':reviewForm.author.$dirty && reviewForm.author.$invalid, 'has-success':reviewForm.author.$valid-email}">
+            <label class="control-label" for="author">Email Address</label>
+            <input type="email" placeholder="Email Address" name="author" class="form-control" ng-model="newReview.author" required/>
+        </div>
+        <input type="submit" value="Add Review" class="btn btn-caution" />
+    </form>
+</div>
