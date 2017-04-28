@@ -1,3 +1,9 @@
-bowlingdata {
-    width:50%;
+th:hover {
+    color:deepskyblue;
+}
+.table {
+    table-layout: fixed;
+}
+#Name {
+    width:400px;
 }

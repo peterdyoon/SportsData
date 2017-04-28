@@ -1,4 +1,4 @@
-var app = angular.module('MyApp', ['storeProducts']);
+var app = angular.module('MyApp', ['playerRankModule', 'teamRankModule', 'playerDataEditModule', 'firebase']);
 
   var config = {
     apiKey: "AIzaSyAVKBHil-peQ1Hjzst25DiFOzX3_Sk7xB0",
@@ -11,30 +11,77 @@ var app = angular.module('MyApp', ['storeProducts']);
   firebase.initializeApp(config);
 var database = firebase.database();
 
-app.controller('myController', function ($scope) {
-    database.ref("/bowlers/").on('value', function(snapshot) {
-        $scope.bowlerdata = snapshot.val();
-        $scope.$digest();
-    });
-});
+app.controller('myController', function ($scope, $firebaseArray) {
+    
+//Time Stamp Functionality
+    $scope.timetotimeStamp = function(lastUpdate){
+        var timetoday = new Date();
+        var doubledigitFormat = function(measure){
+            if (measure < 10){
+                return "0" + measure;
+            } else {
+                return measure;
+            }
+        }
+        if (timetoday.getHours() >12){
+            var hours = timetoday.getHours() - 12;
+            var ampm = "PM";
+        } else {
+            var hours = doubledigitFormat(timetoday.getHours());
+            var ampm = "AM";
+        }
+        if (timetoday.getSeconds() < 10){
+            var seconds = "0" + timetoday.getSeconds();
+        } else {
+            var seconds = timetoday.getSeconds();
+        }
+        return (timetoday.getMonth() + 1) + "/" + timetoday.getDate() + "/" + timetoday.getFullYear() + " " + hours + ":" + doubledigitFormat(timetoday.getMinutes()) + ":" + doubledigitFormat(timetoday.getSeconds()) + ampm;
+    }
 
-app.controller("ReviewController", function ($scope) {
-    $scope.newReview = {};
-    $scope.addReview = function (products) {
-        
-        var id = (new Date().getTime()).toString(36);
-        
-        products.reviews[id] = $scope.newReview;
-        
-        database.ref("/products/" + products.productname + "/reviews/" + id).set(
-            $scope.newReview
-        );
-        
-        $scope.newReview = {};
+//Import Data Functionality
+    $scope.bowlerdata = $firebaseArray(database.ref("/bowlers/"));
+    $scope.teamdata = $firebaseArray(database.ref("/teams/"));
+    
+//Sorting Functionality
+    $scope.myOrder = "";
+    $scope.reverse = false;
+    $scope.lastFilter = "";
+    $scope.myOrderFunc = function(filter){
+        if ($scope.lastFilter === filter){
+            if($scope.reverse === false){
+                $scope.myOrder = filter;
+                $scope.reverse = true;
+            } else {
+                $scope.myOrder = '-' + filter;
+                $scope.reverse = false;
+            }
+        } else {
+            $scope.lastFilter = filter;
+            $scope.reverse = false;
+            $scope.myOrderFunc(filter);
+        }
+    }
+    $scope.myOrderFuncData = function(filter){
+        if ($scope.lastFilter === filter){
+            if($scope.reverse === false){
+                $scope.myOrder = filter;
+                $scope.reverse = true;
+            } else {
+                $scope.myOrder = filter.substring(1, filter.length);
+                $scope.reverse = false;
+            }
+        } else {
+            $scope.lastFilter = filter;
+            $scope.reverse = false;
+            $scope.myOrderFunc(filter);
+        }
     }
 });
 
 //Dummy Function for old Gem Data
+function updateUserData(){
+    database.ref("bowlers/" + 0 + "/").update({Gender: "Male"});
+}
 function writeUserData() {
     for (var i = 0; i < bowlingarray.length; i++) {
         database.ref("bowlers/" + i).set(
@@ -70,8 +117,40 @@ function writeUserData() {
                     WeekAverage: bowlingarray[i].W3Ave,
                     OverallAverage: bowlingarray[i].W3Overall
                 }
-            }
+            },
+        LastUpdated: ""
         });
+    }
+}
+function writeTeamData() {
+    count = 0;
+    for (var i = 0; i < bowlingarray.length; i += 3) {
+        database.ref("teams/" + count).set(
+            {
+                Name : bowlingarray[i].Team, 
+                Player1: bowlingarray[i].Name,
+                Player2: bowlingarray[i + 1].Name,   
+                Player3: bowlingarray[i + 2].Name,
+                
+                W1G1: bowlingarray[i].W1G1 + bowlingarray[i + 1].W1G1 + bowlingarray[i + 2].W1G1,
+                W1G2: bowlingarray[i].W1G2 + bowlingarray[i + 1].W1G2 + bowlingarray[i + 2].W1G2,
+                W1G3: bowlingarray[i].W1G3 + bowlingarray[i + 1].W1G3 + bowlingarray[i + 2].W1G3,
+                
+                Week1Average: (bowlingarray[i].W1G1 + bowlingarray[i + 1].W1G1 + bowlingarray[i + 2].W1G1 + bowlingarray[i].W1G2 + bowlingarray[i + 1].W1G2 + bowlingarray[i + 2].W1G2 + bowlingarray[i].W1G3 + bowlingarray[i + 1].W1G3 + bowlingarray[i + 2].W1G3)/3,
+                
+                W2G1: bowlingarray[i].W2G1 + bowlingarray[i + 1].W2G1 + bowlingarray[i + 2].W2G1,
+                W2G2: bowlingarray[i].W2G2 + bowlingarray[i + 1].W2G2 + bowlingarray[i + 2].W2G2,
+                W2G3: bowlingarray[i].W2G3 + bowlingarray[i + 1].W2G3 + bowlingarray[i + 2].W2G3,
+                
+                Week2Average: (bowlingarray[i].W2G1 + bowlingarray[i + 1].W2G1 + bowlingarray[i + 2].W2G1 + bowlingarray[i].W2G2 + bowlingarray[i + 1].W2G2 + bowlingarray[i + 2].W2G2 + bowlingarray[i].W2G3 + bowlingarray[i + 1].W2G3 + bowlingarray[i + 2].W2G3)/3,
+                
+                W3G1: bowlingarray[i].W3G1 + bowlingarray[i + 1].W3G1 + bowlingarray[i + 2].W3G1,
+                W3G2: bowlingarray[i].W3G2 + bowlingarray[i + 1].W3G2 + bowlingarray[i + 2].W3G2,
+                W3G3: bowlingarray[i].W3G3 + bowlingarray[i + 1].W3G3 + bowlingarray[i + 2].W3G3,
+                
+                Week3Average: (bowlingarray[i].W3G1 + bowlingarray[i + 1].W3G1 + bowlingarray[i + 2].W3G1 + bowlingarray[i].W3G2 + bowlingarray[i + 1].W3G2 + bowlingarray[i + 2].W3G2 + bowlingarray[i].W3G3 + bowlingarray[i + 1].W3G3 + bowlingarray[i + 2].W3G3)/3
+        });
+        count++;
     }
 }
 
