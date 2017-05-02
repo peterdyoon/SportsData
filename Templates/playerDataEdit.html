@@ -12,7 +12,7 @@
         <th ng-click="myOrderFuncData('-Week[1].OverallAverage')">Overall</th>
         <th>Edit</th>
     </tr>
-    <tr ng-repeat="bowler in bowlerdata | orderBy:myOrder | filter : filtername" ng-init="editable = false;newbowler = bowler;">
+    <tr ng-repeat="bowler in bowlerdata | orderBy:myOrder | filter : filtername" ng-init="editable = false;">
         <td>
             <input class = "form-control" ng-show="editable" type="text" ng-model="newbowler.Name"/>
             <span ng-hide="editable">{{bowler.Name}}</span>
@@ -38,8 +38,8 @@
             <span ng-hide="editable">{{bowler.Week[1].OverallAverage | number:0}}</span>
         </td>
         <td>
-            <button class="btn btn-danger" ng-click="editable = true;" ng-hide = "editable">Edit</button>
-            <button class="btn btn-success" ng-click=" bowler.LastUpdated = timetotimeStamp();bowlerdata.$save(newbowler); editable = false; timestamp = true;" ng-show = "editable">Save</button>
+            <button class="btn btn-danger" ng-click="editable = true;newbowler = createClone(bowler);" ng-hide = "editable">Edit</button>
+            <button class="btn btn-success" ng-click="transferClone(bowler, newbowler); bowler.LastUpdated = timetotimeStamp(); bowlerdata.$save(bowler); editable = false; timestamp = true;" ng-show = "editable">Save</button>
             <button class = "btn btn-caution" ng-click = "editable = false" ng-show = "editable">Cancel</button>
             <p ng-show = "timestamp">{{bowler.LastUpdated}}</p>
         </td>

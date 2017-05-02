@@ -1,5 +1,6 @@
 th:hover {
     color:deepskyblue;
+    cursor: default;
 }
 .table {
     table-layout: fixed;

@@ -1,17 +1,67 @@
-var app = angular.module('MyApp', ['playerRankModule', 'teamRankModule', 'playerDataEditModule', 'firebase']);
+var app = angular.module('MyApp', ['playerRankModule', 'teamRankModule', 'playerDataEditModule', 'firebase', 'emailAuthModule']);
 
-  var config = {
+var config = {
     apiKey: "AIzaSyAVKBHil-peQ1Hjzst25DiFOzX3_Sk7xB0",
     authDomain: "hebronbowling.firebaseapp.com",
     databaseURL: "https://hebronbowling.firebaseio.com",
     projectId: "hebronbowling",
     storageBucket: "hebronbowling.appspot.com",
     messagingSenderId: "62684300592"
-  };
-  firebase.initializeApp(config);
+};
+firebase.initializeApp(config);
 var database = firebase.database();
 
-app.controller('myController', function ($scope, $firebaseArray) {
+app.controller('myController', ["$scope", "$firebaseArray", function ($scope, $firebaseArray) {
+    
+//Import Data Functionality
+    importDataAfterAuth = function(){
+        $scope.bowlerdata = $firebaseArray(database.ref("/bowlers/"));
+        $scope.teamdata = $firebaseArray(database.ref("/teams/"));
+    }
+    
+//    Login Information
+    $scope.Register = function () {
+        firebase.auth().createUserWithEmailAndPassword($scope.email,
+            $scope.password).catch(function (error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+        });
+        return false;
+    }
+    $scope.Login = function () {
+        firebase.auth().signInWithEmailAndPassword($scope.email,
+            $scope.password).catch(function (error) {
+            alert("Wrong email");
+            var errorCode = error.code;
+            var errorMessage = error.message;
+        });
+        return false;
+    }
+    $scope.Logout = function () {
+        firebase.auth().signOut();
+        return false;
+    }
+    $scope.OnAuthStateChanged = firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            $scope.authenticated = true;
+            importDataAfterAuth();
+        } else {
+            $scope.authenticated = false;
+        }
+    });
+
+//Create clone on bowler object
+    $scope.createClone = function(bowler){
+        var newObject = Object.assign({}, bowler);
+        return newObject;
+    }
+
+//Transfer clone data to bowler object
+    $scope.transferClone = function(firebowler, newbowler){
+        for (key in firebowler){
+            firebowler[key] = newbowler[key];
+        }
+    }
     
 //Time Stamp Functionality
     $scope.timetotimeStamp = function(lastUpdate){
@@ -37,10 +87,6 @@ app.controller('myController', function ($scope, $firebaseArray) {
         }
         return (timetoday.getMonth() + 1) + "/" + timetoday.getDate() + "/" + timetoday.getFullYear() + " " + hours + ":" + doubledigitFormat(timetoday.getMinutes()) + ":" + doubledigitFormat(timetoday.getSeconds()) + ampm;
     }
-
-//Import Data Functionality
-    $scope.bowlerdata = $firebaseArray(database.ref("/bowlers/"));
-    $scope.teamdata = $firebaseArray(database.ref("/teams/"));
     
 //Sorting Functionality
     $scope.myOrder = "";
@@ -76,7 +122,7 @@ app.controller('myController', function ($scope, $firebaseArray) {
             $scope.myOrderFunc(filter);
         }
     }
-});
+}]);
 
 //Dummy Function for old Gem Data
 function updateUserData(){
