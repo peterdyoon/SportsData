@@ -15,7 +15,7 @@ app.config(['$routeProvider', '$locationProvider', function
     ($routeProvider, $locationProvider) {
 //        $locationProvider.html5Mode(true);
         $routeProvider.when("/", {
-            templateUrl: "index.html"
+            templateUrl: "Templates/main.html"
         }).when("/page1", {
             templateUrl: "Templates/playerDataEdit.html"
         }).when("/page2", {
@@ -27,13 +27,18 @@ app.config(['$routeProvider', '$locationProvider', function
         })
 }]);
 
+app.controller('myNavController', function($scope){
+    $scope.tab = 1;
+    $scope.selectTab = function(newTab){
+        $scope.tab = newTab;
+    };
+});
+
 app.controller('myController', ["$scope", "$firebaseArray", function ($scope, $firebaseArray) {
     
 //Import Data Functionality
-//    importDataAfterAuth = function(){
-        $scope.bowlerdata = $firebaseArray(database.ref("/bowlers/"));
-        $scope.teamdata = $firebaseArray(database.ref("/teams/"));
-//    }
+    $scope.bowlerdata = $firebaseArray(database.ref("/bowlers/"));
+    $scope.teamdata = $firebaseArray(database.ref("/teams/"));
     
 //    Login Information
     $scope.Register = function () {
@@ -60,7 +65,6 @@ app.controller('myController', ["$scope", "$firebaseArray", function ($scope, $f
     $scope.OnAuthStateChanged = firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             $scope.authenticated = true;
-//            importDataAfterAuth();
         } else {
             $scope.authenticated = false;
         }
@@ -123,19 +127,20 @@ app.controller('myController', ["$scope", "$firebaseArray", function ($scope, $f
             $scope.myOrderFunc(filter);
         }
     }
-    $scope.myOrderFuncData = function(filter){
-        if ($scope.lastFilter === filter){
+    $scope.myOrderFuncData = function(filter1, filter2){
+        var tempfilter = filter1 + $scope.SpecWeek + filter2;
+        if ($scope.lastFilter === tempfilter){
             if($scope.reverse === false){
-                $scope.myOrder = filter;
+                $scope.myOrder = tempfilter;
                 $scope.reverse = true;
             } else {
-                $scope.myOrder = filter.substring(1, filter.length);
+                $scope.myOrder = tempfilter.substring(1, tempfilter.length);
                 $scope.reverse = false;
             }
         } else {
-            $scope.lastFilter = filter;
+            $scope.lastFilter = tempfilter;
             $scope.reverse = false;
-            $scope.myOrderFunc(filter);
+            $scope.myOrderFunc(tempfilter);
         }
     }
 }]);
