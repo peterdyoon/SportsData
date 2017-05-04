@@ -1,10 +1,12 @@
 th:hover {
-    color:deepskyblue;
+    color: deepskyblue;
     cursor: default;
 }
+
 .table {
     table-layout: fixed;
 }
+
 #Name {
-    width:400px;
+    width: 400px;
 }

@@ -1,4 +1,4 @@
-var app = angular.module('MyApp', ['playerRankModule', 'teamRankModule', 'playerDataEditModule', 'firebase', 'emailAuthModule']);
+var app = angular.module('MyApp', ['playerRankModule', 'teamRankModule', 'playerDataEditModule', 'firebase', 'emailAuthModule', 'ngRoute']);
 
 var config = {
     apiKey: "AIzaSyAVKBHil-peQ1Hjzst25DiFOzX3_Sk7xB0",
@@ -11,13 +11,29 @@ var config = {
 firebase.initializeApp(config);
 var database = firebase.database();
 
+app.config(['$routeProvider', '$locationProvider', function
+    ($routeProvider, $locationProvider) {
+//        $locationProvider.html5Mode(true);
+        $routeProvider.when("/", {
+            templateUrl: "index.html"
+        }).when("/page1", {
+            templateUrl: "Templates/playerDataEdit.html"
+        }).when("/page2", {
+            templateUrl: "Templates/teamRank.html",
+        }).when("/page3", {
+            templateUrl: "Templates/playerRank.html"
+        }).when("/page4", {
+            templateUrl: "Templates/emailAuth.html"
+        })
+}]);
+
 app.controller('myController', ["$scope", "$firebaseArray", function ($scope, $firebaseArray) {
     
 //Import Data Functionality
-    importDataAfterAuth = function(){
+//    importDataAfterAuth = function(){
         $scope.bowlerdata = $firebaseArray(database.ref("/bowlers/"));
         $scope.teamdata = $firebaseArray(database.ref("/teams/"));
-    }
+//    }
     
 //    Login Information
     $scope.Register = function () {
@@ -44,7 +60,7 @@ app.controller('myController', ["$scope", "$firebaseArray", function ($scope, $f
     $scope.OnAuthStateChanged = firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             $scope.authenticated = true;
-            importDataAfterAuth();
+//            importDataAfterAuth();
         } else {
             $scope.authenticated = false;
         }

@@ -21,33 +21,29 @@
 </head>
 
 <body ng-app="MyApp">
-    <div class="container">
-       <div class="col-xs-3">
-           <div ng-controller = "myController">
-               <email-auth-dir></email-auth-dir>
-           </div>
-       </div>
-        <div class = "col-xs-9">
-            <div ng-controller="myController">
-                <player-data-edit-dir></player-data-edit-dir>
-            </div>
-        </div>
-    </div>
+    <a ng-href="#/">Home</a>
+    <a ng-href="#page1">Edit Player</a>
+    <a ng-href="#page2">Team Rank</a>
+    <a ng-href="#page3">Player Rank</a>
+    <a ng-href="#page4">Login Page</a>
+    <div ng-view></div>
     <!-- /.container -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://www.gstatic.com/firebasejs/3.8.0/firebase.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
+<!--    Changed angular-route (originally 1.6.4)-->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.js" type="text/javascript"></script>
     <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="Scripts/app.js" type="text/javascript"></script>
     <script src="Scripts/Modules/playerRanking.js" type="text/javascript"></script>
     <script src="Scripts/Modules/customFilter.js" type="text/javascript"></script>
     <script src="Scripts/Modules/teamRanking.js" type="text/javascript"></script>
     <script src = "Scripts/Modules/playerDataEditing.js" type = "text/javascript"></script>
     <script type = "text/javascript" src="Scripts/Modules/emailAuthorization.js"></script>
+    <script src="Scripts/app.js" type="text/javascript"></script>
 </body>
 
 </html>

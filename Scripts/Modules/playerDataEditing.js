@@ -5,6 +5,6 @@ angular.module('playerDataEditModule').directive('playerDataEditDir', function (
         restrict: 'E',
         controller: ["$scope", function ($scope) {
         }],
-        templateUrl: '/Templates/playerDataEdit.html'
+        templateUrl: 'Templates/playerDataEdit.html'
     }
 })
