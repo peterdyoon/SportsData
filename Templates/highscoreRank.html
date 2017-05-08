@@ -1,0 +1,33 @@
+<div ng-controller = 'myController'>
+   <div class="col-xs-8">
+        <h1>High Score Rank</h1>
+        <custom-filter-dir></custom-filter-dir>
+        <div class="form-inline" ng-init="SpecGame = ''">
+            <label for="">Select Game:</label>
+            <select class = 'form-control' ng-model = 'SpecGame' autocomplete="off">
+                <option value="" selected>All Games</option> 
+                <option value=1>Game 1</option>
+                <option value=2>Game 2</option>
+                <option value=3>Game 3</option>
+            </select>
+        </div><br>
+        <table class="table table-striped table-condensed">
+            <tr>
+                <th>Bowler</th>
+                <th>Team Name</th>
+                <th>Gender</th>
+                <th>Week</th>
+                <th>Game #</th>
+                <th>Score</th>
+            </tr>
+            <tr ng-repeat="score in scoredata | filter : filtername | filter : {Game:SpecGame} | filter : {Week:SpecWeek} | orderBy:'-Score'| limitTo: 10">
+                <td>{{score.Name}}</td>
+                <td>{{score.Team}}</td>
+                <td>{{score.Gender}}</td>
+                <td>{{score.Week}}</td>
+                <td>{{score.Game}}</td>
+                <td>{{score.Score}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -3,7 +3,7 @@ th:hover {
     cursor: default;
 }
 
-.table {
+#playeredit {
     table-layout: fixed;
 }
 
